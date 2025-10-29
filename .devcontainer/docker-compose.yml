@@ -8,7 +8,6 @@ services:
       - ../django_app:/workspace
     depends_on:
       - db
-      - nginx
 
   db:
     image: postgres:16
