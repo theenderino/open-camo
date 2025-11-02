@@ -1,9 +1,13 @@
 services:
   web:
-    build:
+    build: 
       context: ../django_app
       dockerfile: Dockerfile
 #    command: gunicorn open_camo.wsgi:application --bind 0.0.0.0:8000
+#    command: python manage.py runserver 0.0.0.0:8000
+    command: tail -f /dev/null   # hält den Container am Leben
+    ports:
+      - "8000:8000"
     volumes:
       - ../django_app:/workspace
     depends_on:

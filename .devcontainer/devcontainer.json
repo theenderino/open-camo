@@ -1,17 +1,18 @@
 {
-    "name": "Open-Camo Dev Container",
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "web",                // Container, in dem wir arbeiten
-    "workspaceFolder": "/workspace",
-    "appPort": [8000],
-    "postCreateCommand": "echo 'Dev Container ready!'",
-    "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash"
-    },
-    "extensions": [
+  "name": "Open Camo Dev Environment",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "web",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
         "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-azuretools.vscode-docker"
-    ],
-    "remoteUser": "root"
+        "ms-python.debugpy",
+        "ms-azuretools.vscode-docker",
+        "batisteo.vscode-django"
+      ]
+    }
+  },
+  "forwardPorts": [8000, 80],
+  "postCreateCommand": "python manage.py migrate"
 }

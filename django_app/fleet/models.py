@@ -2,6 +2,7 @@ from django.db import models
 from datetime import date
 
 class Aircraft(models.Model):
+    registration = models.CharField(max_length=20, unique=True, null=True, blank=True)
     manufacturer = models.CharField(max_length=100)
     type = models.CharField(max_length=50)
     date_of_manufacture = models.DateField(null=True, blank=True)
@@ -10,10 +11,10 @@ class Aircraft(models.Model):
     mtw = models.DecimalField("Maximum Takeoff Weight (kg)", max_digits=6, decimal_places=1, null=True, blank=True)
 
     class Meta:
-        ordering = ["manufacturer", "type"]
+        ordering = ["registration"]
 
     def __str__(self):
-        return f"{self.manufacturer} {self.type}"
+        return f"{self.registration}" 
 
     @property
     def tsn(self):

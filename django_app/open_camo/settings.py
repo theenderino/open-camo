@@ -18,6 +18,7 @@ INSTALLED_APPS = [
 
     #Apps
     'fleet',
+    'components',
     'rest_framework',
 ]
 
