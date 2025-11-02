@@ -1,18 +1,30 @@
-FROM python:3.11-slim
+# Basisimage für Python 3.11 und VS Code Dev Container
+FROM mcr.microsoft.com/vscode/devcontainers/python:3.11
 
-RUN apt-get update && apt-get install -y libpq-dev gcc && rm -rf /var/lib/apt/lists/*
+# Installiere nützliche Tools
+RUN apt-get update && \
+    apt-get install -y \
+        procps \          # ps, pkill, top
+        net-tools \       # netstat
+        curl \            # HTTP Requests testen
+        vim \ nano \      # Editoren
+        htop \            # Prozessmonitor
+        git \             # Versionskontrolle
+        tree \            # Projektstruktur anzeigen
+        unzip zip \       # Archive
+        jq \              # JSON aufbereiten
+        netcat \          # Ports testen
+        && rm -rf /var/lib/apt/lists/*
 
+# Arbeitsverzeichnis im Container
 WORKDIR /workspace
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Installiere Python-Pakete für Django-Projekt
+RUN pip install --no-cache-dir \
+    django \
+    djangorestframework \
+    psycopg2-binary \
+    gunicorn
 
-COPY . /workspace
-
+# Expose Port für Django / API
 EXPOSE 8000
-
-# Produktionssystem
-#CMD ["gunicorn", "open_camo.wsgi:application", "--bind", "0.0.0.0:8000"]
-
-# Dev System
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
