@@ -1,9 +1,9 @@
 {
     "name": "Open-Camo Dev Container",
-    "dockerFile": "Dockerfile",
-    "context": "..",
-    "appPort": [8000],
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "web",                // Container, in dem wir arbeiten
     "workspaceFolder": "/workspace",
+    "appPort": [8000],
     "postCreateCommand": "echo 'Dev Container ready!'",
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
