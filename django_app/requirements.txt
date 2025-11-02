@@ -1,4 +1,5 @@
-Django>=5.0
+django>=5.0
+djangorestframework
 gunicorn
 psycopg2-binary
 dj-database-url

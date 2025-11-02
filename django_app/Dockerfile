@@ -11,4 +11,8 @@ COPY . /workspace
 
 EXPOSE 8000
 
-CMD ["gunicorn", "open_camo.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Produktionssystem
+#CMD ["gunicorn", "open_camo.wsgi:application", "--bind", "0.0.0.0:8000"]
+
+# Dev System
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
