@@ -18,5 +18,7 @@ def home(request):
 urlpatterns = [
     path("", home, name="home"),
     path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),  # 👈 REST API für alle Apps
+    path("api/", include(router.urls)), # 👈 REST API für alle Apps
+    path("", include("fleet.urls")),
+    path("", include("components.urls")),  
 ]

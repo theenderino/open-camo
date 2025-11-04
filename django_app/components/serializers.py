@@ -1,7 +1,16 @@
 from rest_framework import serializers
-from .models import Part
+from .models import Component, Requirement
 
-class PartSerializer(serializers.ModelSerializer):
+
+class RequirementSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Part
-        fields = '__all__'
+        model = Requirement
+        fields = "__all__"
+
+
+class ComponentSerializer(serializers.ModelSerializer):
+    requirements = RequirementSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Component
+        fields = "__all__"
