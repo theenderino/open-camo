@@ -1,8 +1,10 @@
 from django.contrib import admin
-from .models import Part
+from .models import Component, Requirement
 
-@admin.register(Part)
-class PartAdmin(admin.ModelAdmin):
-    list_display = ('part_name', 'part_number', 'serial_number', 'tsi', 'tso', 'tsn', 'installed_in_ac')
-    list_filter = ('installed_in_ac',)
-    search_fields = ('part_name', 'part_number', 'serial_number')
+@admin.register(Component)
+class ComponentAdmin(admin.ModelAdmin):
+    list_display = ("part", "part_number", "serial_number", "installed_in_ac")
+
+@admin.register(Requirement)
+class RequirementAdmin(admin.ModelAdmin):
+    list_display = ("name", "interval_fh", "interval_months")
