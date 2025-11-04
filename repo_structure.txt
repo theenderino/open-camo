@@ -1,0 +1,31 @@
+.
+├── .devcontainer
+│   └── devcontainer.json
+├── django_app
+│   ├── components
+│   ├── fleet
+│   ├── manage.py
+│   ├── open_camo
+│   └── requirements.txt
+├── docker-compose.yml
+├── Dockerfile
+├── .git
+│   ├── COMMIT_EDITMSG
+│   ├── config
+│   ├── description
+│   ├── FETCH_HEAD
+│   ├── HEAD
+│   ├── hooks
+│   ├── index
+│   ├── info
+│   ├── logs
+│   ├── objects
+│   ├── ORIG_HEAD
+│   ├── packed-refs
+│   └── refs
+├── nginx
+│   └── default.conf
+├── README.md
+└── repo_structure.txt
+
+13 directories, 16 files

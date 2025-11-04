@@ -2,7 +2,7 @@
   "name": "Open Camo Dev Environment",
   "dockerComposeFile": "docker-compose.yml",
   "service": "web",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/workspace/django_app",
   "customizations": {
     "vscode": {
       "extensions": [
