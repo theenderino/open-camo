@@ -10,7 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - .:/workspace
-      - ~/.ssh:/root/.ssh:ro   # SSH-Keys mounten
+      - ~/.ssh:/home/vscode/.ssh:ro   # SSH-Keys mounten
     depends_on:
       - db
 
