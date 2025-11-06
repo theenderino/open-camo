@@ -1,0 +1,133 @@
+import os
+import time
+import requests
+from datetime import datetime
+from bs4 import BeautifulSoup
+
+# Django initialisieren
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "open_camo.settings")
+django.setup()
+
+from fleet.models import Aircraft
+from django.conf import settings
+
+MAX_RETRIES = 3
+
+def login(session):
+    """Login an der Webseite mit Requests-Session."""
+    login_url = settings.PARSER_LOGIN_URL
+    payload = {
+        "username": settings.PARSER_USERNAME,
+        "passwort": settings.PARSER_PASSWORD,
+        "submitted": "1"
+    }
+    resp = session.post(login_url, data=payload)
+    resp.raise_for_status()
+    if "Login" in resp.text:
+        print(f"[{datetime.now()}] [ERROR] Login fehlgeschlagen – bitte Zugangsdaten prüfen.")
+        return False
+    return True
+
+def logout(session):
+    """Optionaler Logout."""
+    logout_url = getattr(settings, "PARSER_LOGOUT_URL", None)
+    if logout_url:
+        try:
+            session.get(logout_url)
+        except:
+            pass
+
+def fetch_aircraft_data(session):
+    """HTML abrufen und Flugstunden extrahieren."""
+    data_url = settings.PARSER_DATA_URL
+    resp = session.get(data_url)
+    print(resp.url)        # welche URL wurde wirklich geladen
+    print(resp.status_code)
+    print(resp.text[:1000])  # ersten 1000 Zeichen des HTML
+
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+    tbody = soup.find("tbody")
+    if not tbody:
+        print(f"[{datetime.now()}] [ERROR] tbody der Tabelle nicht gefunden")
+        return []
+
+    records = []
+    for tr in tbody.find_all("tr"):
+        tds = tr.find_all("td")
+        if len(tds) < 3:
+            continue
+        reg = tds[0].text.strip()
+        flight_hours_text = tds[2].text.strip()  # z.B. "5732 h 35 m"
+
+        # hh:mm extrahieren
+        try:
+            parts = flight_hours_text.replace("h", "").replace("m", "").split()
+            hours = int(parts[0])
+            minutes = int(parts[1])
+            flight_hours = (hours, minutes)  # als Tuple speichern
+        except Exception as e:
+            print(f"[{datetime.now()}] [WARN] Fehler beim Parsen der Flugstunden für {reg}: {e}")
+            flight_hours = None
+
+        records.append({"registration": reg, "flight_hours": flight_hours})
+    return records
+
+def update_aircraft(records):
+    """Flugstunden in die DB schreiben – nur bei Änderung."""
+    for rec in records:
+        reg = rec["registration"]
+        hours_tuple = rec["flight_hours"]
+        if not hours_tuple:
+            continue
+        try:
+            aircraft = Aircraft.objects.get(registration=reg)
+            # Nur aktualisieren, wenn sich der Wert geändert hat
+            if getattr(aircraft, "tfh_hours", None) != hours_tuple:
+                aircraft.tfh_hours = hours_tuple
+                aircraft.save()
+                h, m = hours_tuple
+                print(f"[{datetime.now()}] {reg}: Flugstunden auf {h}:{m:02d} aktualisiert")
+        except Aircraft.DoesNotExist:
+            print(f"[{datetime.now()}] [WARN] Flugzeug {reg} nicht gefunden")
+
+def run_parser_once():
+    """Einmaliger Parserlauf mit Retry bei Login/Netzwerkproblemen."""
+    print(f"[{datetime.now()}] Starte Parserlauf...")
+    session = requests.Session()
+    retries = 0
+    success = False
+
+    while retries < MAX_RETRIES and not success:
+        try:
+            if not login(session):
+                retries += 1
+                print(f"[{datetime.now()}] Retry {retries}/{MAX_RETRIES} in 5 Sekunden...")
+                time.sleep(5)
+                continue
+            records = fetch_aircraft_data(session)
+            update_aircraft(records)
+            success = True
+        except Exception as e:
+            retries += 1
+            print(f"[{datetime.now()}] [ERROR] Parserfehler: {e} – Retry {retries}/{MAX_RETRIES} in 5 Sekunden...")
+            time.sleep(5)
+        finally:
+            logout(session)
+
+    if not success:
+        print(f"[{datetime.now()}] Parserlauf gescheitert nach {MAX_RETRIES} Versuchen")
+    else:
+        print(f"[{datetime.now()}] Parserlauf abgeschlossen.")
+
+def run_parser_loop(interval_minutes=10):
+    """Parser alle X Minuten laufen lassen."""
+    while True:
+        run_parser_once()
+        print(f"[{datetime.now()}] Warte {interval_minutes} Minuten bis zum nächsten Lauf...")
+        time.sleep(interval_minutes * 60)
+
+# Direkt ausführen
+if __name__ == "__main__":
+    run_parser_loop()

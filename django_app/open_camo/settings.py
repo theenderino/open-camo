@@ -84,6 +84,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 load_dotenv()  
 
 PARSER_LOGIN_URL = os.getenv("PARSER_LOGIN_URL")
+PARSER_LOGOUT_URL = os.getenv("PARSER_LOGOUT_URL")
 PARSER_DATA_URL = os.getenv("PARSER_DATA_URL")
 PARSER_USERNAME = os.getenv("PARSER_USERNAME")
 PARSER_PASSWORD = os.getenv("PARSER_PASSWORD")
