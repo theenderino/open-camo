@@ -29,7 +29,9 @@ RUN pip install --no-cache-dir \
     djangorestframework \
     psycopg2-binary \
     gunicorn \
-    dj-database-url
+    dj-database-url \
+    python-dotenv \
+    requests
 
 # Expose Port für Django / API
 EXPOSE 8000

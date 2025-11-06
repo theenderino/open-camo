@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 import dj_database_url
@@ -20,6 +21,7 @@ INSTALLED_APPS = [
     'fleet',
     'components',
     'rest_framework',
+    'flightdata',
 ]
 
 MIDDLEWARE = [
@@ -77,3 +79,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Lädt Variablen aus .env
+load_dotenv()  
+
+PARSER_LOGIN_URL = os.getenv("PARSER_LOGIN_URL")
+PARSER_DATA_URL = os.getenv("PARSER_DATA_URL")
+PARSER_USERNAME = os.getenv("PARSER_USERNAME")
+PARSER_PASSWORD = os.getenv("PARSER_PASSWORD")
