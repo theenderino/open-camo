@@ -116,7 +116,10 @@ def update_aircraft(records):
                 aircraft.save()
                 print(f"[{datetime.now()}] {reg}: Flugstunden auf {hours} aktualisiert")
         except Aircraft.DoesNotExist:
-            print(f"[{datetime.now()}] [WARN] Flugzeug {reg} nicht gefunden")
+            # Erstelle ein neues Flugzeugobjekt mit der angegebenen Registrierung und Flugstunden
+            Aircraft.objects.create(registration=reg, tfh=hours)
+            print(f"[{datetime.now()}] {reg}: Neues Flugzeug erstellt mit Flugstunden {hours}")
+            # print(f"[{datetime.now()}] [WARN] Flugzeug {reg} nicht gefunden")
 
 def run_parser_once():
     """Einmaliger Parserlauf mit Retry bei Login/Netzwerkproblemen."""
